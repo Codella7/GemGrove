@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Reports | GemGrove{% endblock %}
+{% block content %}
+<div class="page-heading compact"><div><p class="eyebrow">A clearer view</p><h1>Reports</h1><p class="muted">A quick summary of your recorded business.</p></div></div>
+<div class="report-grid"><div class="report-block"><span>Total entries</span><strong>{{ entries|length }}</strong></div><div class="report-block"><span>Paid entries</span><strong>{{ entries|selectattr('status', 'equalto', 'Paid')|list|length }}</strong></div><div class="report-block"><span>Total carats</span><strong>{{ "%.2f"|format(entries|sum(attribute='carat')) }}</strong></div><div class="report-block"><span>Total value</span><strong>{% for currency, total in total_values.items() %}{{ money(total, currency) }}{% if not loop.last %}<br>{% endif %}{% else %}—{% endfor %}</strong></div></div>
+{% endblock %}

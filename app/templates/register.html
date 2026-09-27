@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#1f624b">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>Create account | GemGrove</title>
+	<link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/GemGrove Favicon.png') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+	<main class="login-container">
+		<img src="{{ url_for('static', filename='images/GemGrove Favicon.png') }}" alt="GemGrove" class="logo">
+		<button class="install-app-button" id="install-app" type="button" hidden>Install app</button>
+		<h1 class="title">Create your account</h1>
+		{% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<p class="auth-flash {{ category }}">{{ message }}</p>{% endfor %}{% endwith %}
+		<form class="login-form" method="post">
+			<label>Username<input name="username" required minlength="3" autocomplete="username"></label>
+			<label>Email<input name="email" required type="email" autocomplete="email"></label>
+			<label>Password<input name="password" required type="password" minlength="8" autocomplete="new-password"></label>
+			<label>Confirm password<input name="confirm_password" required type="password" minlength="8" autocomplete="new-password"></label>
+			<button type="submit">Create account</button>
+		</form>
+		<p class="footer-text">Already registered? <a href="{{ url_for('login') }}">Log in</a></p>
+	</main>
+	<script src="{{ url_for('static', filename='js/pwa.js') }}" defer></script>
+</body>
+</html>

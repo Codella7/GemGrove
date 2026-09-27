@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Register customer | GemGrove{% endblock %}
+{% block content %}
+<div class="page-heading compact"><div><p class="eyebrow">Customer registration</p><h1>Register a customer</h1></div></div>
+<form class="entry-form" method="post">
+    <section class="form-section"><h2>Customer details</h2><div class="form-grid">
+        <label>Customer name<input name="name" required autocomplete="name" placeholder="e.g. Asha Gems"></label>
+    </div></section>
+    <div class="form-actions"><a class="button secondary" href="{{ url_for('customers') }}">Cancel</a><button class="button primary" type="submit">Register customer</button></div>
+</form>
+{% endblock %}

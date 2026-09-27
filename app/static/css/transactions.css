@@ -1,0 +1,42 @@
+.cream-bg {
+    background-color: #fdfdf5;
+  }
+  
+  .logo-large {
+    height: 48px;
+    width: auto;
+  }
+  
+  .page-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #556b2f;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .form-grid input,
+  .form-grid select {
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  @media screen and (min-width: 600px) {
+    .form-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Hajiyars | GemGrove{% endblock %}
+{% block content %}
+<div class="page-heading compact"><div><p class="eyebrow">Customer accounts</p><h1>Hajiyars</h1></div><a class="button primary" href="{{ url_for('new_transaction') }}">+ Add entry</a></div>
+<div class="customer-grid">
+{% for customer in customers %}
+<a class="customer-card" href="{{ url_for('customer_history', customer_name=customer.name) }}"><div class="customer-initial">{{ customer.name[0]|upper }}</div><div class="customer-info"><h2>{{ customer.name }}</h2><p>{{ customer.entries }} entries · {{ "%.2f"|format(customer.carats) }} carats</p><strong>{% for currency, total in customer.outstanding.items() %}{{ money(total, currency) }} outstanding{% if not loop.last %}<br>{% endif %}{% else %}No outstanding amount{% endfor %}</strong></div><span class="arrow">→</span></a>
+{% else %}<div class="empty-state">No Hajiyar customers yet. Register the first customer.</div>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+<!-- app/templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}GemGrove Ledger{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f624b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/GemGrove Favicon.png') }}">
+
+
+</head>
+<body>
+    <nav class="navbar">
+        <img src="{{ url_for('static', filename='images/GemGrove Favicon.png') }}" alt="GemGrove Logo" class="logo">
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Overview</a>
+            <a href="{{ url_for('transactions') }}">Ledger</a>
+            <a href="{{ url_for('customers') }}">Hajiyars</a>
+            <a class="reminders-link" href="{{ url_for('reminders') }}">Reminders{% if reminder_counts.due %}<span class="reminder-badge due-badge" title="{{ reminder_counts.due }} unpaid payment{{ '' if reminder_counts.due == 1 else 's' }} due today or later" aria-label="{{ reminder_counts.due }} unpaid payment{{ '' if reminder_counts.due == 1 else 's' }} due today or later">{{ reminder_counts.due }}</span>{% endif %}{% if reminder_counts.overdue %}<span class="reminder-badge overdue-badge" title="{{ reminder_counts.overdue }} overdue payment{{ '' if reminder_counts.overdue == 1 else 's' }}" aria-label="{{ reminder_counts.overdue }} overdue payment{{ '' if reminder_counts.overdue == 1 else 's' }}">{{ reminder_counts.overdue }}</span>{% endif %}</a>
+            {% if current_user %}<form method="post" action="{{ url_for('logout') }}"><button class="nav-logout" type="submit">Log out</button></form>{% endif %}
+        </div>
+        {% if current_user %}<button class="install-app-button" id="install-app" type="button" hidden>Install app</button>{% endif %}
+    </nav>
+
+    <main class="main-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+        <script src="{{ url_for('static', filename='js/pwa.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='js/push-notifications.js') }}" defer></script>
+    </main>
+</body>
+</html>
+

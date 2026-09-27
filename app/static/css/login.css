@@ -1,0 +1,83 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fdfdf0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  .login-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    width: 70%;
+    max-width: 350px;
+  }
+  
+  .logo {
+    width: 80px;
+    margin-bottom: 1rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    color: #2e4d1d;
+    margin-bottom: 1.5rem;
+  }
+  
+  .login-form label { display: block; text-align: left; color: #405047; font-size: .82rem; font-weight: 600; }
+  .login-form input {
+    width: 90%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  .login-form button {
+    width: 80%;
+    padding: 0.75rem;
+    background-color: #556b2f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .login-form button:hover {
+    background-color: #445522;
+  }
+  
+  .footer-text {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .footer-text a {
+    color: #556b2f;
+    text-decoration: none;
+  }
+  .login-form small { display: block; margin: -0.45rem 0 1rem; text-align: left; color: #66766e; font-size: .72rem; }
+  .auth-flash { border-radius: 8px; padding: .7rem; font-size: .82rem; }
+  .auth-flash.error { color: #873d19; background: #fae6dc; }
+  .auth-flash.success { color: #1f624b; background: #e5f1e5; }
+  .install-app-button { margin: 0 0 1rem; padding: .55rem .9rem; border: 1px solid #dfe7df; border-radius: 5px; background: #fff; color: #1f624b; font-size: .82rem; font-weight: 600; cursor: pointer; }
+  .install-app-button[hidden] { display: none; }
+
+  @media (max-width: 560px) {
+    body { min-height: 100dvh; height: auto; align-items: flex-start; padding: 24px 16px; }
+    .login-container { width: 100%; max-width: 430px; padding: 1.5rem; }
+    .logo { width: 64px; }
+    .login-form input { box-sizing: border-box; width: 100%; min-height: 46px; font-size: 16px; }
+    .login-form button { width: 100%; min-height: 46px; }
+  }
+  

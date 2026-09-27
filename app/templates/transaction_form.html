@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit entry' if entry else 'New Entry' }} | GemGrove{% endblock %}
+{% block content %}
+<div class="page-heading compact"><div><p class="eyebrow">{{ 'Update record' if entry else 'New record' }}</p><h1>{{ 'Edit ledger entry' if entry else 'Add a ledger entry' }}</h1><p class="muted">Record a purchase from a seller or a sale to a customer.</p></div></div>
+<form class="entry-form" method="post" enctype="multipart/form-data">
+    <section class="form-section"><h2>Transaction and stone</h2><div class="form-grid">
+        <label>Transaction type<select name="transaction_type" required><option value="Sale" {% if not entry or entry.transaction_type == 'Sale' %}selected{% endif %}>Sale — customer buys from me</option><option value="Purchase" {% if entry and entry.transaction_type == 'Purchase' %}selected{% endif %}>Purchase — I buy from seller</option></select></label>
+        <label>Customer or seller name<input name="customer_name" required value="{{ entry.customer_name if entry else '' }}" placeholder="e.g. Asha Gems"></label>
+        <label>Gemstone<select name="product_name" required><option value="">Choose gemstone</option>{% for product in products %}<option value="{{ product }}" {% if entry and entry.product_name == product %}selected{% endif %}>{{ product }}</option>{% endfor %}</select></label>
+        <label>Place<select name="place" id="place" required><option value="">Choose place</option><option value="Bangkok" {% if entry and entry.place == 'Bangkok' %}selected{% endif %}>Bangkok</option><option value="Hongkok" {% if entry and entry.place == 'Hongkok' %}selected{% endif %}>Hongkok</option><option value="Sri Lanka" {% if entry and entry.place == 'Sri Lanka' %}selected{% endif %}>Sri Lanka</option><option value="India" {% if entry and entry.place == 'India' %}selected{% endif %}>India</option></select></label>
+        <label id="automatic-currency" hidden>Currency<input id="currency-display" readonly><input type="hidden" name="currency" id="automatic-currency-value"></label>
+        <label id="bangkok-currency" hidden>Currency<select name="currency" id="currency-choice" data-current="{{ entry.currency if entry else '' }}"><option value="">Choose currency</option></select><small>Choose Thai baht or US dollars.</small></label>
+        <label>Pieces<input type="number" name="pieces" min="1" value="{{ entry.pieces if entry else 1 }}" required></label>
+        <label>Carat<input id="carat" type="number" step="0.01" min="0" name="carat" value="{{ entry.carat if entry else '' }}" required placeholder="0.00"></label>
+        <label>Price per carat<input id="price-per-carat" type="number" step="0.01" min="0" name="price_per_carat" value="{{ entry.price_per_carat if entry else '' }}" required placeholder="0.00"></label>
+        <label>Total amount<input id="total-price" type="number" step="0.01" min="0" name="total_price" value="{{ entry.total_price if entry else '' }}" data-existing="{{ 'true' if entry else 'false' }}" required placeholder="0.00"><small>Calculated from carat × price per carat. You can adjust it.</small></label>
+        <label>Gem image{% if entry and entry.image_filename %}<img class="gem-preview" src="{{ url_for('static', filename='uploads/' ~ entry.image_filename) }}" alt="Current {{ entry.product_name }} image"><span class="checkbox-label"><input type="checkbox" name="remove_image"> Remove current image</span>{% endif %}<input type="file" name="gem_image" accept="image/jpeg,image/png,image/webp"><small>JPEG, PNG, or WebP up to 5 MB. A new upload replaces the existing image.</small></label>
+    </div></section>
+    <section class="form-section"><h2>Dates and notes</h2><div class="form-grid">
+        <label>Transaction date<input type="date" name="purchase_date" value="{{ entry.purchase_date.isoformat() if entry else today.isoformat() }}" required></label>
+        <label>Payment due date<input type="date" name="due_date" value="{{ entry.due_date.isoformat() if entry and entry.due_date else '' }}"></label>
+        <label class="wide">Notes<textarea name="notes" rows="3" placeholder="Delivery details, contact notes, or anything to remember">{{ entry.notes if entry and entry.notes else '' }}</textarea></label>
+    </div></section>
+    <div class="form-actions"><a class="button secondary" href="{{ url_for('transactions') }}">Cancel</a><button class="button primary" type="submit">{{ 'Save changes' if entry else 'Save entry' }}</button></div>
+</form>
+<script>
+    const placeSelect = document.querySelector("#place");
+    const automaticCurrency = document.querySelector("#automatic-currency");
+    const automaticCurrencyDisplay = document.querySelector("#currency-display");
+    const automaticCurrencyValue = document.querySelector("#automatic-currency-value");
+    const bangkokCurrency = document.querySelector("#bangkok-currency");
+    const currencyChoice = document.querySelector("#currency-choice");
+    const caratInput = document.querySelector("#carat");
+    const pricePerCaratInput = document.querySelector("#price-per-carat");
+    const totalPriceInput = document.querySelector("#total-price");
+    const currenciesForPlace = {{ place_currencies | tojson }};
+    const currencyNames = {{ currency_names | tojson }};
+
+    function updateTotalPrice() {
+        if (totalPriceInput.dataset.manual === "true") return;
+        const carat = Number(caratInput.value);
+        const price = Number(pricePerCaratInput.value);
+        totalPriceInput.value = Number.isFinite(carat) && Number.isFinite(price) ? (carat * price).toFixed(2) : "";
+    }
+
+    totalPriceInput.dataset.manual = totalPriceInput.dataset.existing === "true" ? "true" : "false";
+    caratInput.addEventListener("input", updateTotalPrice);
+    pricePerCaratInput.addEventListener("input", updateTotalPrice);
+    totalPriceInput.addEventListener("input", () => { totalPriceInput.dataset.manual = "true"; });
+    updateTotalPrice();
+
+    function updateCurrencies() {
+        const allowed = currenciesForPlace[placeSelect.value] || [];
+        const selected = currencyChoice.value || currencyChoice.dataset.current;
+        const isBangkok = placeSelect.value === "Bangkok";
+        automaticCurrency.hidden = !allowed.length || isBangkok;
+        bangkokCurrency.hidden = !isBangkok;
+        automaticCurrencyValue.disabled = !allowed.length || isBangkok;
+        currencyChoice.disabled = !isBangkok;
+
+        if (!allowed.length) {
+            automaticCurrencyDisplay.value = "";
+            automaticCurrencyValue.value = "";
+            return;
+        }
+
+        if (!isBangkok) {
+            automaticCurrencyDisplay.value = currencyNames[allowed[0]];
+            automaticCurrencyValue.value = allowed[0];
+            return;
+        }
+
+        currencyChoice.replaceChildren();
+        allowed.forEach((code) => currencyChoice.add(new Option(currencyNames[code], code)));
+        currencyChoice.value = allowed.includes(selected) ? selected : allowed[0];
+        currencyChoice.dataset.current = "";
+    }
+
+    placeSelect.addEventListener("change", updateCurrencies);
+    updateCurrencies();
+</script>
+{% endblock %}
